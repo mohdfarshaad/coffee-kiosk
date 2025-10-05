@@ -8,37 +8,41 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Coffee,
-  CupSoda,
-  Droplets,
-  CreditCard,
   Smartphone,
-  QrCode,
   CheckCircle,
   AlertCircle,
   Sun,
   Moon,
+  HandHeart,
+  CoffeeIcon,
+  LucideIcon,
+  CupSodaIcon,
 } from "lucide-react";
+
+interface Drink {
+  id: number;
+  name: string;
+  price: number;
+  icon: LucideIcon;
+}
 
 const CoffeeKiosk = () => {
   const [step, setStep] = useState("menu");
-  const [selectedDrink, setSelectedDrink] = useState(null);
+  const [selectedDrink, setSelectedDrink] = useState<Drink>();
   const [darkMode, setDarkMode] = useState(false);
   const [cupDetected, setCupDetected] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const drinks: Array<drink> = [
-    { id: 1, name: "Espresso", price: 25, icon: Coffee },
-    { id: 2, name: "Americano", price: 30, icon: Coffee },
-    { id: 3, name: "Latte", price: 40, icon: Coffee },
-    { id: 4, name: "Green Tea", price: 20, icon: CupSoda },
-    { id: 5, name: "Black Tea", price: 18, icon: CupSoda },
-    { id: 6, name: "Cold Brew", price: 35, icon: Droplets },
+  const drinks: Drink[] = [
+    { id: 1, name: "Coffee", price: 15, icon: CoffeeIcon },
+    { id: 2, name: "Tea", price: 10, icon: CupSodaIcon },
+    { id: 4, name: "Green Tea", price: 20, icon: CoffeeIcon },
+    { id: 5, name: "Black Tea", price: 18, icon: CupSodaIcon },
   ];
 
   const payments = [
     { id: "upi", name: "UPI", icon: Smartphone },
-    { id: "card", name: "Card", icon: CreditCard },
-    { id: "qr", name: "QR Code", icon: QrCode },
+    { id: "free", name: "Free", icon: HandHeart },
   ];
 
   useEffect(() => {
@@ -55,7 +59,7 @@ const CoffeeKiosk = () => {
     }
   }, [step, progress]);
 
-  const selectDrink = (drink) => {
+  const selectDrink = (drink: Drink) => {
     setSelectedDrink(drink);
     setStep("payment");
   };
@@ -72,7 +76,7 @@ const CoffeeKiosk = () => {
 
   const reset = () => {
     setStep("menu");
-    setSelectedDrink(null);
+    setSelectedDrink(undefined);
     setCupDetected(false);
     setProgress(0);
   };

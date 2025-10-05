@@ -1,4 +1,4 @@
-import CoffeeKiosk from "./coffee-kisok/page";
+import CoffeeKiosk from "./coffee-kiosk/page";
 
 export default function Home() {
   return <CoffeeKiosk />;
