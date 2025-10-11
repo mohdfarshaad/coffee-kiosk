@@ -98,10 +98,9 @@ const CoffeeKiosk = () => {
         return data.message;
       } catch (err) {
         clearTimeout(timeout);
-        if (err instanceof Error) {
-          if (err.name === "AbortError") return "Connection timed out.";
-          return "Could not connect to the relay system.";
-        }
+
+        if (err.name === "AbortError") return "Connection timed out.";
+        return "Could not connect to the relay system.";
       }
     };
 
