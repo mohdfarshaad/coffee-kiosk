@@ -71,24 +71,56 @@ const CoffeeKiosk = () => {
   const startBrewing = async () => {
     if (!cupDetected || !selectedDrink) return;
 
-    try {
-      // Trigger relay via FastAPI
-      const res = await fetch(
-        `http://10.109.4.83:8000/relay/${selectedDrink.id}`,
-        {
-          method: "POST",
+    const triggerRelay = async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 4000); // 4s timeout
+
+      try {
+        const res = await fetch(
+          `http://10.109.4.83:8000/relay/${selectedDrink.id}`,
+          {
+            method: "POST",
+            signal: controller.signal,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        clearTimeout(timeout);
+
+        if (!res.ok) {
+          return `Server error (${res.status}): ${res.statusText}`;
         }
-      );
 
-      const data = await res.json();
-      console.log(data.message);
+        const data = await res.json();
+        if (data.error) return data.error;
 
-      // Start brewing UI
+        return data.message;
+      } catch (err) {
+        clearTimeout(timeout);
+        if (err instanceof Error) {
+          if (err.name === "AbortError") return "Connection timed out.";
+          return "Could not connect to the relay system.";
+        }
+      }
+    };
+
+    // Attempt relay trigger
+    let result = await triggerRelay();
+
+    // Retry once if failed
+    if (result !== `Relay ${selectedDrink.id} activated for 8 seconds.`) {
+      console.warn("Retrying relay trigger...");
+      result = await triggerRelay();
+    }
+
+    if (result === `Relay ${selectedDrink.id} activated for 8 seconds.`) {
+      console.log(result);
       setStep("brewing");
       setProgress(0);
-    } catch (error) {
-      console.error("Failed to trigger relay:", error);
-      alert("Error: Could not start brewing. Please try again.");
+    } else {
+      console.error("Relay trigger failed:", result);
+      alert(`Brewing failed: ${result}`);
     }
   };
 
