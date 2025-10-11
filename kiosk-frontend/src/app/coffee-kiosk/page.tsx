@@ -36,8 +36,8 @@ const CoffeeKiosk = () => {
   const drinks: Drink[] = [
     { id: 1, name: "Coffee", price: 15, icon: CoffeeIcon },
     { id: 2, name: "Tea", price: 10, icon: CupSodaIcon },
-    { id: 4, name: "Green Tea", price: 20, icon: CoffeeIcon },
-    { id: 5, name: "Black Tea", price: 18, icon: CupSodaIcon },
+    { id: 3, name: "Boost", price: 20, icon: CoffeeIcon },
+    { id: 4, name: "Horlicks", price: 18, icon: CupSodaIcon },
   ];
 
   const payments = [
@@ -68,10 +68,28 @@ const CoffeeKiosk = () => {
     setStep("cup");
   };
 
-  const startBrewing = () => {
-    if (!cupDetected) return;
-    setStep("brewing");
-    setProgress(0);
+  const startBrewing = async () => {
+    if (!cupDetected || !selectedDrink) return;
+
+    try {
+      // Trigger relay via FastAPI
+      const res = await fetch(
+        `http://10.109.4.83:8000/relay/${selectedDrink.id}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const data = await res.json();
+      console.log(data.message);
+
+      // Start brewing UI
+      setStep("brewing");
+      setProgress(0);
+    } catch (error) {
+      console.error("Failed to trigger relay:", error);
+      alert("Error: Could not start brewing. Please try again.");
+    }
   };
 
   const reset = () => {
