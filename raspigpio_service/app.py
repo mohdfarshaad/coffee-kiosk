@@ -1,9 +1,12 @@
 from flask import Flask, jsonify
 from gpio_controller import Relay
+from flask_cors import CORS
 import threading
 import time
 
 app = Flask(__name__)
+
+CORS(app, origins=["http://localhost:3000"])
 
 # Initialize 4 relays
 relays = {

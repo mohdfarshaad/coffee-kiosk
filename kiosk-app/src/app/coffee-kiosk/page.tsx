@@ -77,13 +77,11 @@ const CoffeeKiosk = () => {
 
       try {
         const res = await fetch(
-          `http://10.109.4.83:8000/relay/${selectedDrink.id}`,
+          `http://eeedept.local:5000/relay/${selectedDrink.id}/on`,
           {
             method: "POST",
             signal: controller.signal,
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
           }
         );
         clearTimeout(timeout);
@@ -93,13 +91,13 @@ const CoffeeKiosk = () => {
         }
 
         const data = await res.json();
-        if (data.error) return data.error;
-
-        return data.message;
+        // Return error if exists, else return status message
+        return data.error || data.status || "Unknown response from relay";
       } catch (err) {
         clearTimeout(timeout);
-
-        if (err.name === "AbortError") return "Connection timed out.";
+        if (err instanceof Error && err.name === "AbortError") {
+          return "Connection timed out.";
+        }
         return "Could not connect to the relay system.";
       }
     };
@@ -108,13 +106,13 @@ const CoffeeKiosk = () => {
     let result = await triggerRelay();
 
     // Retry once if failed
-    if (result !== `Relay ${selectedDrink.id} activated for 8 seconds.`) {
+    if (!result.startsWith("Relay")) {
       console.warn("Retrying relay trigger...");
       result = await triggerRelay();
     }
 
-    if (result === `Relay ${selectedDrink.id} activated for 8 seconds.`) {
-      console.log(result);
+    if (result.startsWith("Relay")) {
+      console.log("Relay triggered successfully:", result);
       setStep("brewing");
       setProgress(0);
     } else {
