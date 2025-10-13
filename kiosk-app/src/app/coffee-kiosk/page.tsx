@@ -18,6 +18,7 @@ import {
   LucideIcon,
   CupSodaIcon,
 } from "lucide-react";
+import Image from "next/image";
 
 interface Drink {
   id: number;
@@ -133,7 +134,10 @@ const CoffeeKiosk = () => {
       <div className="min-h-screen bg-background text-foreground p-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-6 p-4 border-b">
-          <h1 className="text-2xl font-bold">Smart Coffee Kiosk</h1>
+          <div>
+            <h1 className="text-2xl font-bold">Brewly</h1>
+            <Image src="" alt="logo" />
+          </div>
           <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>
             {darkMode ? (
               <Sun className="h-4 w-4" />
@@ -151,7 +155,7 @@ const CoffeeKiosk = () => {
                 <CardTitle>Select Your Drink</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                   {drinks.map((drink) => {
                     const Icon = drink.icon;
                     return (
