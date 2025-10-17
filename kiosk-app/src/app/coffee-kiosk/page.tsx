@@ -24,7 +24,7 @@ interface Drink {
   id: number;
   name: string;
   price: number;
-  icon: LucideIcon;
+  icon: string;
 }
 
 const CoffeeKiosk = () => {
@@ -35,15 +35,15 @@ const CoffeeKiosk = () => {
   const [progress, setProgress] = useState(0);
 
   const drinks: Drink[] = [
-    { id: 1, name: "Coffee", price: 15, icon: CoffeeIcon },
-    { id: 2, name: "Tea", price: 10, icon: CupSodaIcon },
-    { id: 3, name: "Boost", price: 20, icon: CoffeeIcon },
-    { id: 4, name: "Horlicks", price: 18, icon: CupSodaIcon },
+    { id: 1, name: "Coffee", price: 15, icon: "/images/coffee-cup.png" },
+    { id: 2, name: "Tea", price: 10, icon: "/images/tea.png" },
+    { id: 3, name: "Boost", price: 20, icon: "/images/boost.png" },
+    { id: 4, name: "Horlicks", price: 18, icon: "/images/energy-drink.png" },
   ];
 
   const payments = [
-    { id: "upi", name: "UPI", icon: Smartphone },
-    { id: "free", name: "Free", icon: HandHeart },
+    { id: "upi", name: "UPI", icon: "/images/credit-card.png" },
+    { id: "free", name: "Free", icon: "/images/free.png" },
   ];
 
   useEffect(() => {
@@ -131,12 +131,15 @@ const CoffeeKiosk = () => {
 
   return (
     <div className={darkMode ? "dark" : ""}>
-      <div className="min-h-screen bg-background text-foreground p-4">
+      <div
+        className="min-h-screen p-4 text-foreground bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images//coffee-stall.jpg')" }}
+      >
         {/* Header */}
         <div className="flex justify-between items-center mb-6 p-4 border-b">
-          <div>
-            <h1 className="text-2xl font-bold">Brewly</h1>
-            <Image src="" alt="logo" />
+          <div className="flex space-x-3 justify-center items-center">
+            <h1 className="text-3xl font-bold text-white">Brewly</h1>
+            <Image src="/images/coffee.png" alt="logo" height={50} width={50} />
           </div>
           <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>
             {darkMode ? (
@@ -150,23 +153,30 @@ const CoffeeKiosk = () => {
         <div className="max-w-4xl mx-auto">
           {/* Menu Selection */}
           {step === "menu" && (
-            <Card>
+            <Card className="bg-white/30 dark:bg-black/40 backdrop-blur-md shadow-lg rounded-xl p-4">
               <CardHeader>
-                <CardTitle>Select Your Drink</CardTitle>
+                <CardTitle className="text-2xl">Select Your Drink</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                   {drinks.map((drink) => {
-                    const Icon = drink.icon;
                     return (
                       <Card
                         key={drink.id}
-                        className="cursor-pointer hover:shadow-md transition-shadow"
+                        className="cursor-pointer hover:shadow-md transition-shadow bg-transparent "
                         onClick={() => selectDrink(drink)}
                       >
-                        <CardContent className="p-4 text-center">
-                          <Icon className="h-8 w-8 mx-auto mb-2" />
-                          <h3 className="font-semibold">{drink.name}</h3>
+                        <CardContent className="p-4 text-center ">
+                          <Image
+                            src={drink.icon}
+                            alt={drink.name}
+                            width={100}
+                            height={100}
+                            className=" mx-auto mb-2"
+                          />
+                          <h3 className="font-semibold text-2xl text-white">
+                            {drink.name}
+                          </h3>
                           <Badge>₹{drink.price}</Badge>
                         </CardContent>
                       </Card>
@@ -179,25 +189,29 @@ const CoffeeKiosk = () => {
 
           {/* Payment Selection */}
           {step === "payment" && (
-            <Card>
+            <Card className="bg-white/30 dark:bg-black/40 backdrop-blur-md shadow-lg rounded-xl p-4">
               <CardHeader>
                 <CardTitle>
                   Pay for {selectedDrink?.name} - ₹{selectedDrink?.price}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-2 gap-4 mb-4">
                   {payments.map((payment) => {
-                    const Icon = payment.icon;
                     return (
                       <Card
                         key={payment.id}
-                        className="cursor-pointer hover:shadow-md transition-shadow"
+                        className="cursor-pointer hover:shadow-md transition-shadow bg-white/30 dark:bg-black/40 backdrop-blur-md shadow-lg rounded-xl p-4"
                         onClick={selectPayment}
                       >
                         <CardContent className="p-4 text-center">
-                          <Icon className="h-8 w-8 mx-auto mb-2" />
-                          <span>{payment.name}</span>
+                          <Image
+                            src={payment.icon}
+                            alt={payment.name}
+                            width={150}
+                            height={150}
+                            className=" mx-auto mb-2"
+                          />
                         </CardContent>
                       </Card>
                     );
@@ -212,21 +226,31 @@ const CoffeeKiosk = () => {
 
           {/* Cup Placement */}
           {step === "cup" && (
-            <Card>
+            <Card className="bg-white/30 dark:bg-black/40 backdrop-blur-md shadow-lg rounded-xl p-4">
               <CardHeader>
                 <CardTitle>Place Your Cup</CardTitle>
               </CardHeader>
               <CardContent className="text-center">
                 <div className="mb-6">
                   <div
-                    className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${
-                      cupDetected ? "bg-green-100" : "bg-red-100"
-                    }`}
+                    className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center`}
                   >
                     {cupDetected ? (
-                      <CheckCircle className="h-10 w-10 text-green-600" />
+                      <Image
+                        src={"/images/cup.png"}
+                        alt={"Cup not placed"}
+                        width={100}
+                        height={100}
+                        className=" mx-auto mb-2"
+                      />
                     ) : (
-                      <AlertCircle className="h-10 w-10 text-red-600" />
+                      <Image
+                        src={"/images/espresso.png"}
+                        alt={"Cup not placed"}
+                        width={100}
+                        height={100}
+                        className=" mx-auto mb-2"
+                      />
                     )}
                   </div>
                   <p className="mb-4">
